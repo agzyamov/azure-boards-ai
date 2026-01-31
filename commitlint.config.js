@@ -6,17 +6,17 @@ export default {
       2,
       "always",
       [
-        "feat",     // New feature
-        "fix",      // Bug fix
-        "docs",     // Documentation
-        "style",    // Formatting (no code change)
+        "feat", // New feature
+        "fix", // Bug fix
+        "docs", // Documentation
+        "style", // Formatting (no code change)
         "refactor", // Code change that neither fixes a bug nor adds a feature
-        "perf",     // Performance improvement
-        "test",     // Adding tests
-        "chore",    // Maintenance tasks
-        "ci",       // CI/CD changes
-        "build",    // Build system changes
-        "revert",   // Revert previous commit
+        "perf", // Performance improvement
+        "test", // Adding tests
+        "chore", // Maintenance tasks
+        "ci", // CI/CD changes
+        "build", // Build system changes
+        "revert", // Revert previous commit
       ],
     ],
     // Subject (message) should not be empty

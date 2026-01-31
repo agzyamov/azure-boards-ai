@@ -3,6 +3,7 @@
 Create a new React component for extension.
 
 ## Trigger
+
 - "add component"
 - "create component"
 - "new component"
@@ -10,6 +11,7 @@ Create a new React component for extension.
 ## Steps
 
 1. Create file at `packages/extension/src/components/{Name}.tsx`:
+
 ```tsx
 import { FC } from "react";
 

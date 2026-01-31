@@ -20,24 +20,28 @@ AI assistant for Azure Boards with Claude Code-like interaction via comments and
 ## Conventions
 
 ### TypeScript
+
 - Strict mode enabled
 - ES2022 target
 - ESM modules (`"type": "module"`)
 - Use `type` for type imports: `import type { X } from "..."`
 
 ### Naming
+
 - Files: `kebab-case.ts`
 - Types/Interfaces: `PascalCase`
 - Functions/Variables: `camelCase`
 - Constants: `SCREAMING_SNAKE_CASE`
 
 ### Imports
+
 - External packages first
 - Then internal packages (`@azure-boards-ai/*`)
 - Then relative imports
 - Separate groups with empty line
 
 ### Error Handling
+
 - Use typed errors
 - Always log errors with context
 - Return clear messages to user
@@ -46,14 +50,14 @@ AI assistant for Azure Boards with Claude Code-like interaction via comments and
 
 Agent uses tool use to perform actions:
 
-| Tool | Description |
-|------|-------------|
-| `specify` | Clarify work item requirements |
-| `plan` | Break down into subtasks |
-| `execute` | Create/update work items |
-| `search` | Find related work items |
-| `read_work_item` | Read work item details |
-| `update_work_item` | Update work item fields |
+| Tool               | Description                    |
+| ------------------ | ------------------------------ |
+| `specify`          | Clarify work item requirements |
+| `plan`             | Break down into subtasks       |
+| `execute`          | Create/update work items       |
+| `search`           | Find related work items        |
+| `read_work_item`   | Read work item details         |
+| `update_work_item` | Update work item fields        |
 
 ## Azure DevOps API
 

@@ -18,6 +18,11 @@ export interface WorkItemSession {
     workItem: WorkItem;
     relatedItems: WorkItem[];
     childItems: WorkItem[];
+    specification?: string;
+    specifyContext?: unknown;
+    executionPlan?: unknown;
+    lastExecution?: unknown;
+    [key: string]: unknown;
   };
   createdAt: Date;
   updatedAt: Date;

@@ -1,0 +1,18 @@
+{
+  "name": "azure-boards-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI assistant for Azure Boards with Claude Code-like interaction",
+  "scripts": {
+    "dev": "pnpm -r dev",
+    "build": "pnpm -r build",
+    "dev:server": "pnpm --filter @azure-boards-ai/server dev",
+    "dev:extension": "pnpm --filter @azure-boards-ai/extension dev",
+    "build:server": "pnpm --filter @azure-boards-ai/server build",
+    "build:extension": "pnpm --filter @azure-boards-ai/extension build"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

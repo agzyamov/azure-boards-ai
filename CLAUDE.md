@@ -17,6 +17,33 @@ AI assistant for Azure Boards with Claude Code-like interaction via comments and
 - `packages/server/` — Backend (Fastify + Claude SDK)
 - `packages/shared/` — Shared TypeScript types
 
+## Rules (Always Follow)
+
+See `.claude/rules/` for detailed guidelines:
+
+- **coding-style.md** — Immutability, file organization, error handling
+- **testing.md** — 80% coverage, TDD workflow
+- **security.md** — No hardcoded secrets, input validation
+- **git-workflow.md** — Commit format, PR process
+
+### Quick Rules
+
+| Rule                 | Requirement |
+| -------------------- | ----------- |
+| Functions            | < 50 lines  |
+| Files                | < 800 lines |
+| Nesting              | < 4 levels  |
+| Coverage             | ≥ 80%       |
+| Cognitive Complexity | ≤ 15        |
+
+## Agents (Specialized Help)
+
+Use these agents for specific tasks:
+
+- `/plan` — Plan implementation before coding
+- `/review` — Code review for quality
+- `/security` — Security audit
+
 ## Conventions
 
 ### TypeScript
@@ -35,16 +62,29 @@ AI assistant for Azure Boards with Claude Code-like interaction via comments and
 
 ### Imports
 
-- External packages first
-- Then internal packages (`@azure-boards-ai/*`)
-- Then relative imports
-- Separate groups with empty line
+```typescript
+// 1. External packages
+import Fastify from "fastify";
+import Anthropic from "@anthropic-ai/sdk";
+
+// 2. Internal packages
+import type { WorkItem } from "@azure-boards-ai/shared";
+
+// 3. Relative imports
+import { SessionManager } from "./sessions/session-manager.js";
+```
 
 ### Error Handling
 
-- Use typed errors
-- Always log errors with context
-- Return clear messages to user
+```typescript
+// Always use typed errors with context
+try {
+  await azureDevOps.createWorkItem(item);
+} catch (error) {
+  logger.error({ error, item }, "Failed to create work item");
+  throw new WorkItemError("Failed to create work item", { cause: error });
+}
+```
 
 ## Tools (for Claude Agent)
 
@@ -59,11 +99,28 @@ Agent uses tool use to perform actions:
 | `read_work_item`   | Read work item details         |
 | `update_work_item` | Update work item fields        |
 
-## Azure DevOps API
+## Development Workflow
 
-- Use `azure-devops-node-api` SDK
-- PAT token for authorization
-- Work Item Tracking API for CRUD operations
+### Before Coding
+
+1. Read the requirements
+2. Use `/plan` to create implementation plan
+3. Get approval before starting
+
+### While Coding
+
+1. Write tests first (TDD)
+2. Keep functions small (< 50 lines)
+3. Handle all errors
+4. No hardcoded secrets
+
+### Before Committing
+
+1. Run `pnpm lint` — fix all errors
+2. Run `pnpm format` — format code
+3. Use `/review` to check quality
+4. Use `/security` for security-sensitive code
+5. Write clear commit message
 
 ## Commands
 
@@ -72,6 +129,8 @@ pnpm install          # Install dependencies
 pnpm dev:server       # Run server in dev mode
 pnpm dev:extension    # Run extension in dev mode
 pnpm build            # Build all packages
+pnpm lint             # Run ESLint
+pnpm format           # Format with Prettier
 ```
 
 ## Environment Variables

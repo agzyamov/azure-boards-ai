@@ -1,0 +1,21 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allowlist for Azure Boards AI"
+paths = [
+    '''\.env\.example$''',
+    '''docs/.*\.md$''',
+]
+
+[[rules]]
+id = "azure-devops-pat"
+description = "Azure DevOps Personal Access Token"
+regex = '''(?i)(azure|ado|devops).*['\"][a-z0-9]{52}['\"]'''
+tags = ["azure", "pat"]
+
+[[rules]]
+id = "anthropic-api-key"
+description = "Anthropic API Key"
+regex = '''sk-ant-[a-zA-Z0-9-_]{32,}'''
+tags = ["anthropic", "api-key"]

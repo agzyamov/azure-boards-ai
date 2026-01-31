@@ -3,13 +3,41 @@
   "version": "0.1.0",
   "private": true,
   "description": "AI assistant for Azure Boards with Claude Code-like interaction",
+  "type": "module",
   "scripts": {
     "dev": "pnpm -r dev",
     "build": "pnpm -r build",
     "dev:server": "pnpm --filter @azure-boards-ai/server dev",
     "dev:extension": "pnpm --filter @azure-boards-ai/extension dev",
     "build:server": "pnpm --filter @azure-boards-ai/server build",
-    "build:extension": "pnpm --filter @azure-boards-ai/extension build"
+    "build:extension": "pnpm --filter @azure-boards-ai/extension build",
+    "lint": "eslint packages --ext .ts,.tsx",
+    "lint:fix": "eslint packages --ext .ts,.tsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.29.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.4.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   },
   "engines": {
     "node": ">=20.0.0",

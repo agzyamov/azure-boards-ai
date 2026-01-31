@@ -1,2 +1,2 @@
 // Shared types for Azure Boards AI
-export {};
+export * from "./types.js";

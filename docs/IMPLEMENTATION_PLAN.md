@@ -127,12 +127,13 @@ packages/server/src/
 ```
 packages/server/src/
 ├── services/
-│   └── azure-devops.ts      # Azure DevOps API client
+│   ├── azure-devops.ts      # Azure DevOps REST API client
+│   └── auth.ts              # Authentication service (Service Principal + PAT)
 └── tools/
     ├── index.ts             # Tool registry
     ├── schemas.ts           # All tool schemas
     ├── read-work-item.ts    # Read work item details
-    ├── search-work-items.ts # Search by query
+    ├── search-work-items.ts # Search by WIQL query
     ├── create-work-item.ts  # Create new work item
     ├── update-work-item.ts  # Update fields
     └── link-work-items.ts   # Create relationships
@@ -141,9 +142,13 @@ packages/server/src/
 **Tasks:**
 
 1. **Azure DevOps Service** (services/azure-devops.ts)
-   - Authentication (PAT)
-   - Work Item Tracking API client
-   - Error handling and retries
+   - REST API client (v7.1) using fetch/axios
+   - Authentication:
+     - Service Principal for server-side API calls (production)
+     - PAT token support for local development only
+   - Token management and refresh logic
+   - Error handling with exponential backoff retry
+   - Rate limiting handling (429 responses)
 
 2. **Read Tool** (tools/read-work-item.ts)
    - Get work item by ID
@@ -158,6 +163,8 @@ packages/server/src/
    - Create with specified fields
    - Set parent relationship
    - Copy fields from parent
+   - Validate work item type exists
+   - Handle required fields validation
 
 5. **Update Tool** (tools/update-work-item.ts)
    - Update any field
@@ -208,9 +215,12 @@ packages/server/src/
 3. **Execute Tool** (tools/execute.ts)
    - Read plan from session
    - Support dry-run mode
-   - Create work items in batch
-   - Set up relationships
-   - Report results
+   - Create work items in batches (handle >200 item limit)
+   - Implement chunking for large plans
+   - Set up relationships (parent-child, related)
+   - Progress reporting during execution
+   - Rollback strategy on errors
+   - Report results with created IDs
    - Update session state to "idle"
 
 4. **Agent Prompt Updates**
@@ -293,35 +303,56 @@ packages/extension/
 
 **Tasks:**
 
-1. **Error Handling**
-   - Graceful error messages
-   - Retry logic for transient failures
-   - Connection loss recovery
+1. **Authentication Migration**
+   - Implement Microsoft Entra OAuth flow for user authentication
+   - Configure Service Principal for production server
+   - Integrate Azure Key Vault for credential storage
+   - Remove hardcoded PAT tokens from production
+   - Token refresh and rotation logic
 
-2. **Logging & Observability**
+2. **Error Handling**
+   - Graceful error messages
+   - Exponential backoff retry for transient failures
+   - Rate limit handling (429 responses)
+   - Connection loss recovery
+   - Batch operation error rollback
+
+3. **Logging & Observability**
    - Structured logging (pino)
    - Request tracing
    - Error tracking
+   - API usage metrics
+   - Rate limit monitoring
 
-3. **Security**
-   - Validate all inputs
-   - Sanitize outputs
-   - Rate limiting
+4. **Security**
+   - Input validation with Zod schemas
+   - Output sanitization (XSS prevention)
+   - Rate limiting per session
+   - Extension manifest scope review
+   - Audit logging for all work item operations
+   - No sensitive data in logs
 
-4. **Testing**
-   - Unit tests for tools
+5. **Testing**
+   - Unit tests for tools (80% coverage minimum)
    - Integration tests for flows
    - E2E tests for extension
+   - Load testing for batch operations (>200 items)
+   - Security testing (auth flows, input validation)
 
-5. **Documentation**
+6. **Documentation**
    - README with setup instructions
+   - Authentication setup guide (Service Principal + OAuth)
    - API documentation
    - Extension marketplace listing
+   - Security and compliance documentation
 
-6. **Deployment**
+7. **Deployment**
    - Docker container for server
+   - Azure Key Vault integration
+   - Environment-specific configs (dev/prod)
    - Extension packaging (.vsix)
    - CI/CD for releases
+   - Monitoring and alerting setup
 
 **Deliverable:** Production-ready v1.0.
 
@@ -354,18 +385,23 @@ Phase 5 (Polish)
 
 ## Tech Stack
 
-| Component        | Technology                 |
-| ---------------- | -------------------------- |
-| Server Runtime   | Node.js 22+                |
-| Server Framework | Fastify                    |
-| WebSocket        | @fastify/websocket         |
-| AI               | Claude API (Anthropic SDK) |
-| Azure DevOps     | azure-devops-node-api      |
-| Extension UI     | React 18                   |
-| Chat UI          | assistant-ui               |
-| Build Tool       | Vite                       |
-| Package Manager  | pnpm                       |
-| Language         | TypeScript                 |
+| Component        | Technology                       | Notes                        |
+| ---------------- | -------------------------------- | ---------------------------- |
+| Server Runtime   | Node.js 22+                      |                              |
+| Server Framework | Fastify                          | With @fastify/websocket      |
+| WebSocket        | @fastify/websocket               | + SSE fallback (optional)    |
+| AI               | Claude API (Anthropic SDK)       |                              |
+| Azure DevOps API | REST API v7.1 (fetch/axios)      | Direct API, not node-api lib |
+| Auth (Dev)       | PAT tokens                       | Local development only       |
+| Auth (Prod)      | Service Principal + OAuth        | Microsoft Entra ID           |
+| Secret Storage   | Azure Key Vault                  | Production credentials       |
+| Extension SDK    | azure-devops-extension-sdk v4.2+ | Client-side context access   |
+| Extension UI     | React 18                         |                              |
+| Chat UI          | assistant-ui                     |                              |
+| Build Tool       | Vite                             |                              |
+| Package Manager  | pnpm                             |                              |
+| Language         | TypeScript                       | Strict mode enabled          |
+| Validation       | Zod                              | Input/output validation      |
 
 ---
 
@@ -405,6 +441,7 @@ azure-boards-ai/
 │   │   │   │   └── sessions.ts
 │   │   │   ├── services/
 │   │   │   │   ├── azure-devops.ts
+│   │   │   │   ├── auth.ts
 │   │   │   │   └── claude.ts
 │   │   │   ├── sessions/
 │   │   │   │   └── session-manager.ts

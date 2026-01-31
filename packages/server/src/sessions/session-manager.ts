@@ -1,9 +1,15 @@
 import { nanoid } from "nanoid";
 import type { WorkItemSession, SessionCreateRequest } from "@azure-boards-ai/shared";
+import { AzureDevOpsService } from "../services/azure-devops.js";
 
 export class SessionManager {
   private sessions: Map<string, WorkItemSession> = new Map();
   private workItemIndex: Map<string, string> = new Map();
+  private azureDevOps?: AzureDevOpsService;
+
+  constructor(azureDevOps?: AzureDevOpsService) {
+    this.azureDevOps = azureDevOps;
+  }
 
   async create(request: SessionCreateRequest): Promise<WorkItemSession> {
     const { workItemId, projectId, organizationUrl } = request;
@@ -18,6 +24,14 @@ export class SessionManager {
       }
     }
 
+    // Load work item context from Azure DevOps
+    const azureDevOps = this.azureDevOps || new AzureDevOpsService(organizationUrl);
+    const [workItem, relatedItems, childItems] = await Promise.all([
+      azureDevOps.getWorkItem(projectId, workItemId),
+      azureDevOps.getRelatedWorkItems(projectId, workItemId),
+      azureDevOps.getChildWorkItems(projectId, workItemId),
+    ]);
+
     const session: WorkItemSession = {
       id: nanoid(),
       workItemId,
@@ -26,9 +40,9 @@ export class SessionManager {
       state: "idle",
       transcript: [],
       context: {
-        workItem: {} as never,
-        relatedItems: [],
-        childItems: [],
+        workItem,
+        relatedItems,
+        childItems,
       },
       createdAt: new Date(),
       updatedAt: new Date(),

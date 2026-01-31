@@ -1,13 +1,39 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { SessionManager } from "./session-manager.js";
+import type { WorkItem } from "@azure-boards-ai/shared";
 
 const TEST_ORG_URL = "https://dev.azure.com/test";
+
+// Mock Azure DevOps Service
+const mockAzureDevOps = {
+  getWorkItem: vi.fn(),
+  getRelatedWorkItems: vi.fn(),
+  getChildWorkItems: vi.fn(),
+  createWorkItem: vi.fn(),
+  updateWorkItem: vi.fn(),
+};
 
 describe("SessionManager", () => {
   let manager: SessionManager;
 
   beforeEach(() => {
-    manager = new SessionManager();
+    vi.clearAllMocks();
+
+    const mockWorkItem: WorkItem = {
+      id: 123,
+      fields: {
+        "System.Title": "Test Work Item",
+        "System.Description": "Test description",
+        "System.State": "New",
+        "System.WorkItemType": "User Story",
+      },
+    };
+
+    mockAzureDevOps.getWorkItem.mockResolvedValue(mockWorkItem);
+    mockAzureDevOps.getRelatedWorkItems.mockResolvedValue([]);
+    mockAzureDevOps.getChildWorkItems.mockResolvedValue([]);
+
+    manager = new SessionManager(mockAzureDevOps as never);
   });
 
   describe("create", () => {
@@ -24,6 +50,15 @@ describe("SessionManager", () => {
       expect(session.organizationUrl).toBe(TEST_ORG_URL);
       expect(session.state).toBe("idle");
       expect(session.transcript).toEqual([]);
+
+      // Verify Azure DevOps was called to load context
+      expect(mockAzureDevOps.getWorkItem).toHaveBeenCalledWith("TestProject", 123);
+      expect(mockAzureDevOps.getRelatedWorkItems).toHaveBeenCalledWith("TestProject", 123);
+      expect(mockAzureDevOps.getChildWorkItems).toHaveBeenCalledWith("TestProject", 123);
+
+      // Verify context was loaded
+      expect(session.context.workItem.id).toBe(123);
+      expect(session.context.workItem.fields["System.Title"]).toBe("Test Work Item");
     });
 
     it("should return existing session for same work item", async () => {

@@ -1,17 +1,50 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import Fastify from "fastify";
 import { sessionRoutes } from "./sessions.js";
+import { SessionManager } from "../sessions/session-manager.js";
+import type { WorkItem } from "@azure-boards-ai/shared";
 
 const API_SESSIONS_PREFIX = "/api/sessions";
 const TEST_ORG_URL = "https://dev.azure.com/test";
 const TEST_PROJECT = "TestProject";
 
+// Mock Azure DevOps Service
+const mockAzureDevOps = {
+  getWorkItem: vi.fn(),
+  getRelatedWorkItems: vi.fn(),
+  getChildWorkItems: vi.fn(),
+  createWorkItem: vi.fn(),
+  updateWorkItem: vi.fn(),
+};
+
 describe("sessionRoutes", () => {
   let app: ReturnType<typeof Fastify>;
+  let sessionManager: SessionManager;
 
   beforeEach(async () => {
+    vi.clearAllMocks();
+
+    const mockWorkItem: WorkItem = {
+      id: 123,
+      fields: {
+        "System.Title": "Test Work Item",
+        "System.Description": "Test description",
+        "System.State": "New",
+        "System.WorkItemType": "User Story",
+      },
+    };
+
+    mockAzureDevOps.getWorkItem.mockResolvedValue(mockWorkItem);
+    mockAzureDevOps.getRelatedWorkItems.mockResolvedValue([]);
+    mockAzureDevOps.getChildWorkItems.mockResolvedValue([]);
+
+    sessionManager = new SessionManager(mockAzureDevOps as never);
+
     app = Fastify();
-    await app.register(sessionRoutes, { prefix: API_SESSIONS_PREFIX });
+    await app.register(sessionRoutes, {
+      prefix: API_SESSIONS_PREFIX,
+      sessionManager,
+    });
   });
 
   it("should create a session", async () => {
@@ -64,6 +97,16 @@ describe("sessionRoutes", () => {
   });
 
   it("should get session by work item ID", async () => {
+    const mockWorkItem456: WorkItem = {
+      id: 456,
+      fields: {
+        "System.Title": "Another Work Item",
+        "System.State": "New",
+      },
+    };
+
+    mockAzureDevOps.getWorkItem.mockResolvedValueOnce(mockWorkItem456);
+
     const createResponse = await app.inject({
       method: "POST",
       url: API_SESSIONS_PREFIX,
@@ -106,6 +149,20 @@ describe("sessionRoutes", () => {
   });
 
   it("should list all sessions", async () => {
+    const mockWorkItem101: WorkItem = {
+      id: 101,
+      fields: { "System.Title": "Work Item 101" },
+    };
+
+    const mockWorkItem102: WorkItem = {
+      id: 102,
+      fields: { "System.Title": "Work Item 102" },
+    };
+
+    mockAzureDevOps.getWorkItem
+      .mockResolvedValueOnce(mockWorkItem101)
+      .mockResolvedValueOnce(mockWorkItem102);
+
     await app.inject({
       method: "POST",
       url: API_SESSIONS_PREFIX,
@@ -137,6 +194,13 @@ describe("sessionRoutes", () => {
   });
 
   it("should delete a session", async () => {
+    const mockWorkItem789: WorkItem = {
+      id: 789,
+      fields: { "System.Title": "Work Item to Delete" },
+    };
+
+    mockAzureDevOps.getWorkItem.mockResolvedValueOnce(mockWorkItem789);
+
     const createResponse = await app.inject({
       method: "POST",
       url: API_SESSIONS_PREFIX,

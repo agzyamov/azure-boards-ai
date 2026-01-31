@@ -2,9 +2,12 @@ import type { FastifyInstance } from "fastify";
 import { SessionManager } from "../sessions/session-manager.js";
 import type { SessionCreateRequest } from "@azure-boards-ai/shared";
 
-const sessionManager = new SessionManager();
+export interface SessionRoutesOptions {
+  sessionManager?: SessionManager;
+}
 
-export async function sessionRoutes(app: FastifyInstance) {
+export async function sessionRoutes(app: FastifyInstance, opts: SessionRoutesOptions = {}) {
+  const sessionManager = opts.sessionManager || new SessionManager();
   // Create new session
   app.post<{ Body: SessionCreateRequest }>("/", async (request) => {
     const session = await sessionManager.create(request.body);

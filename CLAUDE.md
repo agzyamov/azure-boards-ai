@@ -135,8 +135,29 @@ pnpm format           # Format with Prettier
 
 ## Environment Variables
 
+### Development
+
+```bash
+ANTHROPIC_API_KEY=              # Claude API key
+AZURE_DEVOPS_PAT=               # Azure DevOps Personal Access Token (dev only)
+AZURE_DEVOPS_ORG=               # Azure DevOps organization URL
+NODE_ENV=development
 ```
-ANTHROPIC_API_KEY=    # Claude API key
-AZURE_DEVOPS_PAT=     # Azure DevOps Personal Access Token
-AZURE_DEVOPS_ORG=     # Azure DevOps organization URL
+
+### Production
+
+```bash
+ANTHROPIC_API_KEY=              # Claude API key
+AZURE_DEVOPS_ORG=               # Azure DevOps organization URL
+AZURE_TENANT_ID=                # Microsoft Entra tenant ID
+AZURE_CLIENT_ID=                # Service Principal client ID
+AZURE_CLIENT_SECRET=            # Service Principal secret (from Key Vault)
+AZURE_KEY_VAULT_URL=            # Azure Key Vault URL
+NODE_ENV=production
 ```
+
+**Security Notes:**
+
+- Never commit PAT tokens or secrets to git
+- Use Azure Key Vault for production credentials
+- PAT tokens are for local development only

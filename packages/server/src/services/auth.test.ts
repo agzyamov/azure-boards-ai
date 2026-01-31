@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { AuthService, createAuthServiceFromEnv } from "./auth.js";
 
 // Mock fetch globally
-global.fetch = vi.fn();
+global.fetch = vi.fn() as unknown as typeof fetch;
 
 const TEST_ORG_URL = "https://dev.azure.com/test";
 const TEST_PAT = "test-pat-token";
@@ -16,7 +16,7 @@ describe("AuthService", () => {
 
   beforeEach(() => {
     mockFetch = vi.fn();
-    global.fetch = mockFetch;
+    global.fetch = mockFetch as unknown as typeof fetch;
     vi.useFakeTimers();
   });
 

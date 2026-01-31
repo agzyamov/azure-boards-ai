@@ -13,20 +13,21 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0",
+    "@anthropic-ai/sdk": "^0.72.1",
     "@azure-boards-ai/shared": "workspace:*",
-    "@fastify/cors": "^10.0.0",
-    "@fastify/websocket": "^11.0.0",
-    "azure-devops-node-api": "^14.1.0",
-    "fastify": "^5.2.0",
-    "nanoid": "^5.0.9",
-    "zod": "^3.24.0"
+    "@fastify/cors": "^11.2.0",
+    "@fastify/websocket": "^11.2.0",
+    "azure-devops-node-api": "^15.1.2",
+    "fastify": "^5.7.2",
+    "nanoid": "^5.1.6",
+    "pino": "^10.3.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
+    "@types/node": "^25.1.0",
     "@vitest/coverage-v8": "^4.0.18",
-    "tsx": "^4.19.0",
-    "typescript": "^5.4.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   }
 }

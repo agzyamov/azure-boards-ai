@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import type { WorkItemSession, SessionCreateRequest } from "@azure-boards-ai/shared";
-import { AzureDevOpsService } from "../services/azure-devops.js";
+import type { AzureDevOpsService } from "../services/azure-devops.js";
 
 export class SessionManager {
   private sessions: Map<string, WorkItemSession> = new Map();
@@ -25,7 +25,12 @@ export class SessionManager {
     }
 
     // Load work item context from Azure DevOps
-    const azureDevOps = this.azureDevOps || new AzureDevOpsService(organizationUrl);
+    // Note: This will fail at runtime - need proper AuthService initialization
+    // This is a temporary placeholder until SessionManager is refactored
+    if (!this.azureDevOps) {
+      throw new Error("AzureDevOpsService not configured in SessionManager");
+    }
+    const azureDevOps = this.azureDevOps;
     const [workItem, relatedItems, childItems] = await Promise.all([
       azureDevOps.getWorkItem(projectId, workItemId),
       azureDevOps.getRelatedWorkItems(projectId, workItemId),

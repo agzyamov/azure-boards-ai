@@ -4,7 +4,7 @@ import type { AuthService } from "./auth.js";
 import type { WorkItem } from "@azure-boards-ai/shared";
 
 // Mock fetch globally
-global.fetch = vi.fn();
+global.fetch = vi.fn() as unknown as typeof fetch;
 
 const TEST_ORG_URL = "https://dev.azure.com/test";
 const TEST_PROJECT = "TestProject";
@@ -24,7 +24,7 @@ describe("AzureDevOpsService", () => {
 
   beforeEach(() => {
     mockFetch = vi.fn();
-    global.fetch = mockFetch;
+    global.fetch = mockFetch as unknown as typeof fetch;
     mockAuthService = createMockAuthService();
 
     service = new AzureDevOpsService(TEST_ORG_URL, mockAuthService);

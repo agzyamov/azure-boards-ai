@@ -10,12 +10,12 @@
   "dependencies": {
     "@assistant-ui/react": "^0.7.0",
     "azure-devops-extension-sdk": "^4.0.0",
-    "react": "^18.3.0",
+    "react": "^19.2.4",
     "react-dom": "^18.3.0",
     "@azure-boards-ai/shared": "workspace:*"
   },
   "devDependencies": {
-    "@types/react": "^18.3.0",
+    "@types/react": "^19.2.10",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.0",
     "typescript": "^5.4.0",

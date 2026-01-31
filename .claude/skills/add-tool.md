@@ -3,6 +3,7 @@
 Create a new tool for Claude Agent.
 
 ## Trigger
+
 - "add tool"
 - "create tool"
 - "new tool"
@@ -10,6 +11,7 @@ Create a new tool for Claude Agent.
 ## Steps
 
 1. Create schema file at `packages/server/src/tools/{name}.schema.ts`:
+
 ```typescript
 import type { ToolDefinition } from "@azure-boards-ai/shared";
 
@@ -27,6 +29,7 @@ export const {name}Schema: ToolDefinition = {
 ```
 
 2. Create implementation at `packages/server/src/tools/{name}.ts`:
+
 ```typescript
 import type { ToolContext } from "../agent/types.js";
 import type { {Name}Input, {Name}Output } from "@azure-boards-ai/shared";

@@ -17,37 +17,44 @@ The system follows patterns established by OpenClaw — a proven open-source AI 
 ## User Stories
 
 ### Core Interaction
+
 - **US-1**: As a user, I want to open a chat panel on any work item and ask questions or give instructions in natural language, so that I can get help without leaving Azure DevOps
 - **US-2**: As a user, I want AI responses to stream in real-time, so that I see progress immediately without waiting
 - **US-3**: As a user, I want chat history preserved per work item, so that I can continue conversations later
 
 ### Requirements Clarification (Specify)
+
 - **US-4**: As a product owner, I want to ask AI to help me refine requirements, so that acceptance criteria are clear and complete
 - **US-5**: As a user, I want AI to ask clarifying questions about edge cases, so that requirements cover all scenarios
 - **US-6**: As a user, I want AI to suggest improvements to description, so that work items are well-defined
 
 ### Task Breakdown (Plan)
+
 - **US-7**: As a team lead, I want to ask AI to break down a large work item into subtasks, so that work can be distributed among team members
 - **US-8**: As a user, I want AI to identify dependencies between subtasks, so that work is sequenced correctly
 - **US-9**: As a user, I want AI to estimate effort for subtasks, so that I can plan capacity
 
 ### Execution (Execute)
+
 - **US-10**: As a user, I want AI to create planned subtasks as actual work items, so that I don't have to create them manually
 - **US-11**: As a user, I want AI to set up parent-child relationships automatically, so that hierarchy is correct
 - **US-12**: As a user, I want to preview what will be created before confirming, so that I can verify the plan
 
 ### Work Item Operations
+
 - **US-13**: As a user, I want to ask AI to find related work items, so that I understand context and dependencies
 - **US-14**: As a user, I want to ask AI to update work item fields, so that I can make changes through conversation
 - **US-15**: As a developer, I want AI to understand work item context (parent, children, links), so that suggestions are relevant
 
 ### Session Management
+
 - **US-16**: As a user, I want each work item to have its own conversation, so that discussions don't mix
 - **US-17**: As a user, I want to see what flow stage I'm in (specify/plan/execute), so that I know where I am in the process
 
 ## Functional Requirements
 
 ### FR-1: Chat Panel
+
 - Chat panel appears as a side panel within Azure DevOps work item view
 - Panel can be opened/closed by user
 - Supports markdown rendering in messages
@@ -55,17 +62,20 @@ The system follows patterns established by OpenClaw — a proven open-source AI 
 - Displays tool execution status (what AI is doing)
 
 ### FR-2: Real-Time Streaming
+
 - AI responses stream token-by-token via WebSocket
 - Tool calls and results shown as they happen
 - Connection resilience with automatic reconnection
 
 ### FR-3: Natural Language Understanding
+
 - AI understands user intent from natural language (no slash commands required)
 - Supports English and Russian languages
 - AI asks clarifying questions when intent is unclear
 - AI determines which flow to activate based on request
 
 ### FR-4: Work Item Context
+
 - AI has access to current work item details (title, description, acceptance criteria, state, tags, etc.)
 - AI can see work item hierarchy (parent, children)
 - AI can see linked work items (related, predecessor/successor)
@@ -73,6 +83,7 @@ The system follows patterns established by OpenClaw — a proven open-source AI 
 - Context refreshes when work item changes
 
 ### FR-5: Specify Flow
+
 - AI asks targeted questions to clarify requirements
 - AI identifies missing information: acceptance criteria, edge cases, dependencies
 - AI suggests improvements to description
@@ -81,6 +92,7 @@ The system follows patterns established by OpenClaw — a proven open-source AI 
 - Flow completes when user confirms specification
 
 ### FR-6: Plan Flow
+
 - AI analyzes work item and proposes breakdown into subtasks
 - Each subtask includes: title, description, type, tags
 - AI identifies dependencies between subtasks
@@ -90,6 +102,7 @@ The system follows patterns established by OpenClaw — a proven open-source AI 
 - Flow completes when user approves plan
 
 ### FR-7: Execute Flow
+
 - AI creates work items based on approved plan
 - AI sets up parent-child relationships
 - AI copies relevant fields from parent (area path, iteration, tags)
@@ -99,6 +112,7 @@ The system follows patterns established by OpenClaw — a proven open-source AI 
 - Flow completes when all items created successfully
 
 ### FR-8: Work Item Operations
+
 - **Read**: Get work item by ID, get children, get parent, get linked items
 - **Search**: Find work items by query (title, tags, state, assignee)
 - **Update**: Modify fields (state, tags, assignment, description, etc.)
@@ -106,6 +120,7 @@ The system follows patterns established by OpenClaw — a proven open-source AI 
 - **Link**: Create relationships between work items
 
 ### FR-9: Session Management
+
 - Each work item has its own chat session
 - Session stores conversation transcript
 - Session tracks current flow state: idle | specify | plan | execute
@@ -114,6 +129,7 @@ The system follows patterns established by OpenClaw — a proven open-source AI 
 - Session can be cleared/reset by user
 
 ### FR-10: Permission Passthrough
+
 - All operations execute with user's Azure DevOps permissions
 - AI cannot perform actions user is not authorized to do
 - Permission errors shown clearly to user
@@ -122,24 +138,28 @@ The system follows patterns established by OpenClaw — a proven open-source AI 
 ## Non-Functional Requirements
 
 ### NFR-1: Performance
+
 - Chat response should start streaming within 2 seconds
 - Work item read operations complete within 1 second
 - Work item write operations complete within 3 seconds
 - Concurrent sessions supported without degradation
 
 ### NFR-2: Security
+
 - Uses Azure DevOps authentication (user's PAT or OAuth)
 - No sensitive data stored outside Azure DevOps and session storage
 - API keys stored securely on server, never exposed to client
 - HTTPS/WSS for all communication
 
 ### NFR-3: Reliability
+
 - Graceful handling of API errors (Azure DevOps, Claude)
 - Clear error messages with actionable guidance
 - No data loss on connection interruption
 - Automatic retry for transient failures
 
 ### NFR-4: Usability
+
 - Intuitive chat interface (similar to ChatGPT/Claude)
 - Clear indication of AI actions and their results
 - Confirmation required before destructive/bulk operations
@@ -147,6 +167,7 @@ The system follows patterns established by OpenClaw — a proven open-source AI 
 - Mobile-friendly panel layout
 
 ### NFR-5: Observability
+
 - Logging of all operations for troubleshooting
 - Error tracking with context
 - Usage metrics (optional)
@@ -154,6 +175,7 @@ The system follows patterns established by OpenClaw — a proven open-source AI 
 ## User Interface
 
 ### Chat Panel Layout
+
 ```
 ┌─────────────────────────────────────┐
 │ Azure Boards AI        [State] [×] │
@@ -186,16 +208,20 @@ The system follows patterns established by OpenClaw — a proven open-source AI 
 ```
 
 ### Flow State Indicator
+
 - Shows current state: `Idle` | `Specifying...` | `Planning...` | `Executing...`
 - Allows user to understand where they are in the process
 
 ### Action Confirmations
+
 Before executing actions (creating/updating work items), AI shows:
+
 - Summary of what will be done
 - List of items to be created/modified with details
 - [Confirm] / [Modify] / [Cancel] options
 
 ### Error Display
+
 - Inline error messages with clear explanation
 - Suggestions for resolution when possible
 - Option to retry failed operations
@@ -203,16 +229,19 @@ Before executing actions (creating/updating work items), AI shows:
 ## Integration Points
 
 ### Azure DevOps
+
 - Azure DevOps Extension SDK (azure-devops-extension-sdk)
 - Work Item Tracking REST API
 - User authentication via Azure DevOps OAuth or PAT
 
 ### AI Provider
+
 - Claude API (Anthropic)
 - Streaming responses via SSE
 - Tool use (function calling) for operations
 
 ### Communication
+
 - WebSocket for real-time streaming between Extension and Server
 - REST API for session management
 

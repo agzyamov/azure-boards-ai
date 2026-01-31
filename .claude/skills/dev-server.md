@@ -3,6 +3,7 @@
 Start the server in development mode.
 
 ## Trigger
+
 - "start server"
 - "dev server"
 - "run server"

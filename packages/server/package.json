@@ -13,7 +13,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0",
+    "@anthropic-ai/sdk": "^0.72.1",
     "@azure-boards-ai/shared": "workspace:*",
     "@fastify/cors": "^10.0.0",
     "@fastify/websocket": "^11.0.0",
